@@ -6,3 +6,5 @@ edition = "2021"
 [dependencies]
 tokio = { version = "1.46.1", features = ["full"] }
 tunecore = { version = "0.1.0", path = "tunecore" }
+mongodb ="3.2.4"
+serde = "1.0.219"

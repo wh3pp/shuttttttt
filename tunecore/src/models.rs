@@ -1,21 +1,21 @@
 use chrono::NaiveDate;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
-#[derive(Deserialize, Debug, PartialEq)]
+#[derive(Deserialize, Serialize, Debug, PartialEq)]
 pub struct SongTitle {
     pub ja: String,
     pub en: String,
     pub ja_kana: String,
 }
 
-#[derive(Deserialize, Debug, PartialEq)]
+#[derive(Deserialize, Serialize, Debug, PartialEq)]
 pub struct ArtistName {
     pub ja: String,
     pub en: String,
     pub ja_kana: String,
 }
 
-#[derive(Deserialize, Debug, PartialEq)]
+#[derive(Deserialize, Serialize, Debug, PartialEq)]
 pub struct Artist {
     pub artist_id: u64,
     pub name: ArtistName,
@@ -25,7 +25,7 @@ pub struct Artist {
     pub common_artist_id: Option<u64>,
 }
 
-#[derive(Deserialize, Debug, PartialEq)]
+#[derive(Deserialize, Serialize, Debug, PartialEq)]
 pub struct CommunitySong {
     pub id: u64,
     pub index: usize,
@@ -45,7 +45,7 @@ pub struct CommunitySong {
     pub is_favorite: bool,
 }
 
-#[derive(Deserialize, Debug, PartialEq)]
+#[derive(Deserialize, Serialize, Debug, PartialEq)]
 pub struct Creators {
     pub community_songs: Vec<CommunitySong>,
     pub total: usize,
