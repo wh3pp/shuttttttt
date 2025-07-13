@@ -6,9 +6,9 @@ pub struct ArtistName {
     /// The artist's name in Japanese.
     pub ja: String,
     /// The artist's name in English.
-    pub en: String,
+    pub en: Option<String>,
     /// The artist's name in Japanese (Kana).
-    pub ja_kana: String,
+    pub ja_kana: Option<String>,
 }
 
 /// Represents an artist associated with a song.
