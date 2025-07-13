@@ -1,34 +1,48 @@
 mod db;
 mod ingestion;
-use db::{Db, DbResult};
+
+use crate::db::{Db, DbResult};
+use crate::ingestion::SongsCollector;
 use dotenvy::dotenv;
 use std::env;
-use tunecore::{creators::SortBy, TunecoreClient};
+use std::time::Instant;
+use tracing::{info, Level};
+use tracing_subscriber::FmtSubscriber;
+use tunecore::TunecoreClient;
 
 #[tokio::main]
 async fn main() -> DbResult<()> {
-    dotenv().ok();
-    let db_uri = env::var("DATABASE_URI").expect("DATABASE_URI must be set in .env file");
-    let db_name = env::var("DATABASE_NAME").expect("DATABASE_NAME must be set in .env file");
+    let subscriber = FmtSubscriber::builder()
+        .with_max_level(Level::INFO)
+        .finish();
+    tracing::subscriber::set_global_default(subscriber)
+        .expect("setting default tracing subscriber failed");
 
+    dotenv().ok();
+
+    info!("Loading configuration...");
+
+    let db_uri = env::var("DATABASE_URI")?;
+    let db_name = env::var("DATABASE_NAME")?;
+
+    info!("Establishing connections...");
     let db = Db::connect(&db_uri, &db_name).await?;
     let songs_repo = db.songs();
-
     let client = TunecoreClient::new();
+    let collector = SongsCollector::new(&client, &songs_repo);
+    info!("Setup complete.");
 
-    let response = client
-        .creators()
-        .songs()
-        .per_page(20)
-        .sort(SortBy::Popularity)
-        .send()
-        .await?;
+    const MAX_CONCURRENCY: usize = 25;
+    info!(concurrency = MAX_CONCURRENCY, "Starting song collection...");
 
-    if response.community_songs.is_empty() {
-        println!("No response were found.");
-    } else {
-        println!("Found {} songs", response.community_songs.len());
-        songs_repo.save_many(&response.community_songs).await?;
-    }
+    let start_time = Instant::now();
+    collector.collect_all(MAX_CONCURRENCY).await?;
+    let duration = start_time.elapsed();
+
+    info!(
+        duration_secs = duration.as_secs_f64(),
+        "Collection finished successfully."
+    );
+
     Ok(())
 }
