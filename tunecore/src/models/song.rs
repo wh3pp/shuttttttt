@@ -8,9 +8,9 @@ pub struct SongTitle {
     /// The song title in Japanese.
     pub ja: String,
     /// The song title in English.
-    pub en: String,
+    pub en: Option<String>,
     /// The song title in Japanese (Kana).
-    pub ja_kana: String,
+    pub ja_kana: Option<String>,
 }
 
 /// Represents a single song from the community endpoint.

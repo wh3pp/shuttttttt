@@ -45,7 +45,7 @@ use reqwest::Client;
 ///
 /// This client holds the HTTP client and provides access to different
 /// API endpoint groups (e.g., `creators`).
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct TunecoreClient {
     http_client: Client,
 }

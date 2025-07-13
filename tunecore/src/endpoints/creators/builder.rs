@@ -22,9 +22,9 @@ const DEFAULT_PER_PAGE: u32 = 100;
 /// # Example
 ///
 /// ```no_run
-/// # use tunecore_api_client::TunecoreClient;
-/// # use tunecore_api_client::endpoints::creators::types::SortBy;
-/// # async fn run() -> Result<(), tunecore_api_client::Error> {
+/// # use tunecore::TunecoreClient;
+/// # use tunecore::creators::SortBy;
+/// # async fn run() -> Result<(), tunecore::error::Error> {
 /// let client = TunecoreClient::new();
 ///
 /// let response = client
