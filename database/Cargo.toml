@@ -1,9 +1,0 @@
-[package]
-name = "database"
-version = "0.1.0"
-edition = "2021"
-
-[dependencies]
-futures-util = "0.3.31"
-tunecore = { version = "0.1.0", path = "../tunecore" }
-mongodb ="3.2.4"
