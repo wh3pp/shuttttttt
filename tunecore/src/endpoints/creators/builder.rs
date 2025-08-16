@@ -56,6 +56,7 @@ pub struct CreatorsBuilder<'a> {
     bpm_from: Option<u16>,
     bpm_to: Option<u16>,
     sort: Option<SortBy>,
+    keyword: Option<&'a str>,
 }
 
 impl<'a> CreatorsBuilder<'a> {
@@ -78,6 +79,7 @@ impl<'a> CreatorsBuilder<'a> {
             bpm_from: None,
             bpm_to: None,
             sort: None,
+            keyword: None,
         }
     }
 
@@ -167,6 +169,11 @@ impl<'a> CreatorsBuilder<'a> {
         self
     }
 
+    /// Sets the keyword to search.
+    pub fn keyword(mut self, keyword: &'a str) -> Self {
+        self.keyword = Some(keyword);
+        self
+    }
     /// Executes the request against the API.
     ///
     /// This consumes the builder and returns a `Result` containing either
@@ -207,6 +214,7 @@ impl<'a> CreatorsBuilder<'a> {
         self.append_optional_param(&mut query, "share_rate_to", self.share_rate_to);
         self.append_optional_param(&mut query, "bpm_from", self.bpm_from);
         self.append_optional_param(&mut query, "bpm_to", self.bpm_to);
+        self.append_optional_param(&mut query, "keyword", self.keyword);
 
         if let Some(sort_param) = self.sort {
             let sort_str = match sort_param {

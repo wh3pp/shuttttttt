@@ -2,7 +2,7 @@
 //! This module provides a structured and safe API for all database
 //! operations related to `CommunitySong` documents.
 
-use super::{collections, DbResult};
+use super::{collections, error::Result};
 use futures_util::stream::TryStreamExt;
 use mongodb::{
     bson::{doc, to_document},
@@ -13,6 +13,7 @@ use tunecore::models::CommunitySong;
 
 /// A repository for handling database operations on the `songs` collection.
 ///
+#[allow(dead_code)]
 #[derive(Clone, Debug)]
 pub struct SongsRepo {
     database: Database,
@@ -39,7 +40,7 @@ impl SongsRepo {
     ///
     /// # Arguments
     /// * `songs` - A slice of `CommunitySong` to save or update.
-    pub async fn save_many(&self, songs: &[CommunitySong]) -> DbResult<()> {
+    pub async fn save_many(&self, songs: &[CommunitySong]) -> Result<()> {
         if songs.is_empty() {
             return Ok(());
         }
@@ -61,7 +62,7 @@ impl SongsRepo {
 
                 Ok(WriteModel::UpdateOne(model))
             })
-            .collect::<DbResult<Vec<_>>>()?;
+            .collect::<Result<Vec<_>>>()?;
 
         let client = self.database.client();
 
@@ -79,7 +80,7 @@ impl SongsRepo {
     /// * `page` - The page number to retrieve (1-based). If 0 is passed, it defaults to 1.
     /// * `per_page` - The maximum number of songs to retrieve for the page.
     #[allow(dead_code)]
-    pub async fn get_paged(&self, page: u64, per_page: u64) -> DbResult<Vec<CommunitySong>> {
+    pub async fn get_paged(&self, page: u64, per_page: u64) -> Result<Vec<CommunitySong>> {
         let page = page.max(1);
         // Calculate the number of documents to skip to get to the desired page.
         let skip = (page - 1) * per_page;
@@ -109,7 +110,7 @@ impl SongsRepo {
     /// # Returns
     /// A `DbResult` containing the number of documents deleted.
     #[allow(dead_code)]
-    pub async fn delete_all(&self) -> DbResult<u64> {
+    pub async fn delete_all(&self) -> Result<u64> {
         let result = self.collection.delete_many(doc! {}).await?;
         Ok(result.deleted_count)
     }

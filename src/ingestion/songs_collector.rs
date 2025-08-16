@@ -1,4 +1,4 @@
-use crate::db::{DbResult, SongsRepo};
+use crate::db::{Result, SongsRepo};
 use futures::stream;
 use futures_util::{stream::TryStreamExt, StreamExt};
 use std::sync::Arc;
@@ -29,7 +29,7 @@ impl SongsCollector {
     /// Fetches all songs from the API concurrently and saves them to the database.
     #[instrument(skip_all, fields(concurrency = max_concurrency))]
     #[allow(dead_code)]
-    pub async fn collect_all(&self, max_concurrency: usize) -> DbResult<()> {
+    pub async fn collect_all(&self, max_concurrency: usize) -> Result<()> {
         const BATCH_SIZE: usize = 1000;
 
         let first_response = self.client.creators().songs().send().await?;
@@ -72,7 +72,7 @@ impl SongsCollector {
                         .send()
                         .await?
                         .community_songs;
-                    Ok(songs) as DbResult<Vec<CommunitySong>>
+                    Ok(songs) as Result<Vec<CommunitySong>>
                 }
             })
             .buffer_unordered(max_concurrency)

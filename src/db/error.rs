@@ -17,8 +17,8 @@ pub enum DbError {
     /// Represents an error originating from the Tunecore client library.
     #[error("Tunecore error: {0}")]
     Tunecore(#[from] tunecore::error::Error),
-
-    /// Represents an error originating from the env error
-    #[error("Environment variable error: {0}")]
-    Env(#[from] std::env::VarError),
 }
+
+/// The specialized `Result` type for database operations.
+pub type Error = DbError;
+pub type Result<T> = std::result::Result<T, Error>;
